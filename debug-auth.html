@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Debug Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Authentication Debug Tool</h1>
+        
+        <h2>Sign Up</h2>
+        <div class="form-group">
+            <label for="signup-name">Name:</label>
+            <input type="text" id="signup-name" placeholder="Enter name">
+        </div>
+        <div class="form-group">
+            <label for="signup-email">Email:</label>
+            <input type="email" id="signup-email" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+            <label for="signup-password">Password:</label>
+            <input type="password" id="signup-password" placeholder="Enter password">
+        </div>
+        <button onclick="signup()">Sign Up</button>
+        
+        <h2>Sign In</h2>
+        <div class="form-group">
+            <label for="signin-email">Email:</label>
+            <input type="email" id="signin-email" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+            <label for="signin-password">Password:</label>
+            <input type="password" id="signin-password" placeholder="Enter password">
+        </div>
+        <button onclick="signin()">Sign In</button>
+        
+        <h2>Test Notes API</h2>
+        <button onclick="testNotes()">Get Notes</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        let currentToken = localStorage.getItem('token');
+
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<pre class="result ${isError ? 'error' : 'success'}">${message}</pre>`;
+        }
+
+        async function signup() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    showResult(`Signup successful!\nToken: ${data.token}\nUser: ${JSON.stringify(data.user, null, 2)}`);
+                } else {
+                    showResult(`Signup failed: ${JSON.stringify(data, null, 2)}`, true);
+                }
+            } catch (error) {
+                showResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        async function signin() {
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/signin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    showResult(`Signin successful!\nToken: ${data.token}\nUser: ${JSON.stringify(data.user, null, 2)}`);
+                } else {
+                    showResult(`Signin failed: ${JSON.stringify(data, null, 2)}`, true);
+                }
+            } catch (error) {
+                showResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        async function testNotes() {
+            if (!currentToken) {
+                showResult('No token available. Please sign in first.', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/notes`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`Notes retrieved successfully!\nNotes: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    showResult(`Failed to get notes: ${JSON.stringify(data, null, 2)}`, true);
+                }
+            } catch (error) {
+                showResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        // Check if token exists on page load
+        if (currentToken) {
+            showResult(`Token found in localStorage: ${currentToken}`);
+        } else {
+            showResult('No token found. Please sign in.', true);
+        }
+    </script>
+</body>
+</html>

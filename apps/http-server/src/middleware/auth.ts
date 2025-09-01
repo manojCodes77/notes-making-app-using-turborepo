@@ -6,7 +6,7 @@ interface AuthRequest extends Request {
   user?: any;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'jaishreeram';
 
 export const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

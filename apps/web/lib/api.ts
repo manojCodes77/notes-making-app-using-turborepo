@@ -11,12 +11,34 @@ const api = axios.create({
 
 // Add token to requests if available
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const token = localStorage.getItem('token');
+    console.log('API Request to:', config.url);
+    console.log('Token available:', token ? 'yes' : 'no');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('Authorization header set');
+    }
+  } catch (error) {
+    console.error('Error getting token from localStorage:', error);
   }
   return config;
 });
+
+// Handle response errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear invalid token
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Redirect to login or refresh page
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Auth API
 export const authAPI = {
