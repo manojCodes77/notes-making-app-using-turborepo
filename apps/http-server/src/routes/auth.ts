@@ -11,6 +11,13 @@ const generateToken = (userId: string) => {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
 };
 
+// @route   GET /api/auth
+// @desc    Test endpoint
+// @access  Public
+router.get("/", (req: Request, res: Response) => {
+  res.send("Hello World");
+});
+
 router.post('/signup', [
   body('name', 'Name is required').not().isEmpty(),
   body('email', 'Please include a valid email').isEmail(),
