@@ -15,21 +15,21 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "mongoose": "^8.3.4",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
     "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.4",
     "tsup": "^8.5.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.1",
-    "@types/node": "^22.13.10",
     "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.7",
     "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.13.10",
     "typescript": "^5.8.3"
   }
 }

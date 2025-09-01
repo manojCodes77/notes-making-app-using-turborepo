@@ -11,14 +11,16 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@next/env": "^15.5.2",
     "@repo/ui": "*",
+    "axios": "^1.7.9",
+    "clsx": "^2.1.1",
+    "dotenv": "^17.2.1",
+    "lucide-react": "^0.468.0",
     "next": "^15.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "axios": "^1.7.9",
     "react-hook-form": "^7.52.1",
-    "lucide-react": "^0.468.0",
-    "clsx": "^2.1.1",
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
